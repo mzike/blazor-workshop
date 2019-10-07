@@ -3,7 +3,6 @@
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@inject PushNotifications PushNotifications
 
 <div class="main">
     <AuthorizeView Context="authContext">
@@ -87,15 +86,10 @@
 
     async Task RequestNotificationSubscriptionAsync()
     {
-        var subscription = await PushNotifications.RequestSubscription();
+        var subscription = await JSRuntime.InvokeAsync<NotificationSubscription>("blazorPushNotifications.requestSubscription");
         if (subscription != null)
         {
-            await HttpClient.PutJsonAsync<object>("notifications/subscribe", new NotificationSubscription
-            {
-                Url = subscription.Url,
-                P256dh = subscription.P256dh,
-                Auth = subscription.Auth,
-            });
+            await HttpClient.PutJsonAsync<object>("notifications/subscribe", subscription);
         }
     }
 }
