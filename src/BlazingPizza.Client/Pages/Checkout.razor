@@ -3,6 +3,7 @@
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject PushNotifications PushNotifications
 
 <div class="main">
     <AuthorizeView Context="authContext">
@@ -63,6 +64,9 @@
                 NavigationManager.NavigateTo("");
             }
         }
+
+        // In the background, ask if they want to be notified about order updates
+        _ = RequestNotificationSubscriptionAsync();
     }
 
     async Task PlaceOrder()
@@ -78,6 +82,20 @@
         finally
         {
             isSubmitting = false;
+        }
+    }
+
+    async Task RequestNotificationSubscriptionAsync()
+    {
+        var subscription = await PushNotifications.RequestSubscription();
+        if (subscription != null)
+        {
+            await HttpClient.PutJsonAsync<object>("notifications/subscribe", new NotificationSubscription
+            {
+                Url = subscription.Url,
+                P256dh = subscription.P256dh,
+                Auth = subscription.Auth,
+            });
         }
     }
 }

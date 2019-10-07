@@ -1,6 +1,5 @@
 ﻿@page "/myorders"
 @inject HttpClient HttpClient
-@inject PushNotifications PushNotifications
 @attribute [Authorize]
 
 <div class="main">
@@ -31,20 +30,6 @@
 </div>
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        var subscription = await PushNotifications.RequestSubscription();
-        if (subscription != null)
-        {
-            await HttpClient.PutJsonAsync<object>("notifications/subscribe", new NotificationSubscription
-            {
-                Url = subscription.Url,
-                P256dh = subscription.P256dh,
-                Auth = subscription.Auth,
-            });
-        }
-    }
-
     async Task<List<OrderWithStatus>> LoadOrders()
     {
         return await HttpClient.GetJsonAsync<List<OrderWithStatus>>("orders");
