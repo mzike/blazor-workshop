@@ -58,8 +58,6 @@ namespace BlazingPizza.Server
         [HttpPost]
         public async Task<ActionResult<int>> PlaceOrder(Order order)
         {
-            
-
             order.CreatedTime = DateTime.Now;
             order.DeliveryLocation = new LatLong(51.5001, -0.1239);
             order.UserId = GetUserId();
@@ -124,7 +122,7 @@ namespace BlazingPizza.Server
                 var payload = JsonSerializer.Serialize(new
                 {
                     message,
-                    url = "http://example.com" // TODO
+                    url = $"myorders/{order.OrderId}",
                 });
                 await webPushClient.SendNotificationAsync(pushSubscription, payload, vapidDetails);
             }

@@ -22,3 +22,11 @@ self.addEventListener('push', function (e) {
         })
     );
 });
+
+self.addEventListener('notificationclick', function (e) {
+    const notification = e.notification;
+    notification.close();
+    e.waitUntil(
+        clients.openWindow(notification.data.url)
+    );
+});
