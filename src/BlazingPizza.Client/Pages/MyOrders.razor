@@ -33,8 +33,14 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        var endpoint = await PushNotifications.RequestSubscription();
-        Console.WriteLine(endpoint);
+        var endpointUrl = await PushNotifications.RequestSubscription();
+        if (endpointUrl != null)
+        {
+            await HttpClient.PutJsonAsync<object>("notifications/endpoint", new NotificationEndpoint
+            {
+                Url = endpointUrl
+            });
+        }
     }
 
     async Task<List<OrderWithStatus>> LoadOrders()
