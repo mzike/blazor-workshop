@@ -14,11 +14,9 @@ self.addEventListener('push', function (e) {
     e.waitUntil(
         self.registration.showNotification('Blazing Pizza', {
             body: payload.message,
-            icon: 'images/icon-512.png',
+            icon: 'img/icon-512.png',
             vibrate: [100, 50, 100],
-            data: {
-                url: payload.url
-            }
+            data: { url: payload.url }
         })
     );
 });
