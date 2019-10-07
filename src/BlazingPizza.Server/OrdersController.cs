@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebPush;
 
 namespace BlazingPizza.Server
 {
@@ -56,6 +58,27 @@ namespace BlazingPizza.Server
         [HttpPost]
         public async Task<ActionResult<int>> PlaceOrder(Order order)
         {
+            var subscription = await _db.NotificationSubscriptions.Where(e => e.UserId == GetUserId()).SingleOrDefaultAsync();
+            if (subscription != null)
+            {
+                var pushSubscription = new PushSubscription(subscription.Url, subscription.P256dh, subscription.Auth);
+                var vapidDetails = new VapidDetails("mailto:<someone@example.com>", "BLC8GOevpcpjQiLkO7JmVClQjycvTCYWm6Cq_a7wJZlstGTVZvwGFFHMYfXt6Njyvgx_GlXJeo5cSiZ1y4JOx1o", "OrubzSz3yWACscZXjFQrrtDwCKg-TGFuWhluQ2wLXDo");
+                var webPushClient = new WebPushClient();
+                try
+                {
+                    var payload = JsonSerializer.Serialize(new
+                    {
+                        message = "Your order has been dispatched!",
+                        url = "http://example.com"
+                    });
+                    await webPushClient.SendNotificationAsync(pushSubscription, payload, vapidDetails);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine("Error sending push notification: " + ex.Message);
+                }
+            }
+
             order.CreatedTime = DateTime.Now;
             order.DeliveryLocation = new LatLong(51.5001, -0.1239);
             order.UserId = GetUserId();

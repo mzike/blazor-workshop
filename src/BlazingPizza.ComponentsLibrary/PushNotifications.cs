@@ -12,9 +12,16 @@ namespace BlazingPizza.ComponentsLibrary
             _jsRuntime = jsRuntime;
         }
 
-        public async Task<string> RequestSubscription()
+        public async Task<SubscriptionInfo> RequestSubscription()
         {
-            return await _jsRuntime.InvokeAsync<string>("blazorPushNotifications.requestSubscription");
+            return await _jsRuntime.InvokeAsync<SubscriptionInfo>("blazorPushNotifications.requestSubscription");
+        }
+
+        public class SubscriptionInfo
+        {
+            public string Url { get; set; }
+            public string P256dh { get; set; }
+            public string Auth { get; set; }
         }
     }
 }

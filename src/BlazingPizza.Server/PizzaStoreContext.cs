@@ -21,7 +21,7 @@ namespace BlazingPizza.Server
 
         public DbSet<Topping> Toppings { get; set; }
 
-        public DbSet<NotificationEndpoint> NotificationEndpoints { get; set; }
+        public DbSet<NotificationSubscription> NotificationSubscriptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

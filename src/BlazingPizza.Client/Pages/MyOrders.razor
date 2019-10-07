@@ -33,12 +33,14 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        var endpointUrl = await PushNotifications.RequestSubscription();
-        if (endpointUrl != null)
+        var subscription = await PushNotifications.RequestSubscription();
+        if (subscription != null)
         {
-            await HttpClient.PutJsonAsync<object>("notifications/endpoint", new NotificationEndpoint
+            await HttpClient.PutJsonAsync<object>("notifications/subscribe", new NotificationSubscription
             {
-                Url = endpointUrl
+                Url = subscription.Url,
+                P256dh = subscription.P256dh,
+                Auth = subscription.Auth,
             });
         }
     }

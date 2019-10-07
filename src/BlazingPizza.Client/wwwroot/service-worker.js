@@ -8,3 +8,17 @@ self.addEventListener('fetch', event => {
     // The following line opts out, so requests go directly to the network as usual.
     return null;
 });
+
+self.addEventListener('push', function (e) {
+    const payload = e.data.json();
+    e.waitUntil(
+        self.registration.showNotification('Blazing Pizza', {
+            body: payload.message,
+            icon: 'images/icon-512.png',
+            vibrate: [100, 50, 100],
+            data: {
+                url: payload.url
+            }
+        })
+    );
+});

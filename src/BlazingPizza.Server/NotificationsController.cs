@@ -17,21 +17,21 @@ namespace BlazingPizza.Server
             _db = db;
         }
 
-        [HttpPut("endpoint")]
-        public async Task<NotificationEndpoint> Endpoint(NotificationEndpoint endpoint)
+        [HttpPut("subscribe")]
+        public async Task<NotificationSubscription> Subscribe(NotificationSubscription subscription)
         {
-            // We're storing at most one endpoint per user, so delete old ones.
-            // Alternatively, you could let the user register multiple endpoints from different browsers/devices.
+            // We're storing at most one subscription per user, so delete old ones.
+            // Alternatively, you could let the user register multiple subscriptions from different browsers/devices.
             var userId = GetUserId();
-            var oldEndpoints = _db.NotificationEndpoints.Where(e => e.UserId == userId);
-            _db.NotificationEndpoints.RemoveRange(oldEndpoints);
+            var oldSubscriptions = _db.NotificationSubscriptions.Where(e => e.UserId == userId);
+            _db.NotificationSubscriptions.RemoveRange(oldSubscriptions);
 
-            // Store new endpoint
-            endpoint.UserId = userId;
-            _db.NotificationEndpoints.Attach(endpoint);
+            // Store new subscription
+            subscription.UserId = userId;
+            _db.NotificationSubscriptions.Attach(subscription);
 
             await _db.SaveChangesAsync();
-            return endpoint;
+            return subscription;
         }
 
         private string GetUserId()
